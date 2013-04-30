@@ -14,7 +14,6 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
     self.setup_shift(shift_button)
     self.setup_matrix(matrix_notes)
     self.setup_session(self._matrix)
-    #self.setup_buttons(mode_buttons)
 
   def setup_matrix(self, matrix_notes):
     self._matrix = ButtonMatrixElement()
