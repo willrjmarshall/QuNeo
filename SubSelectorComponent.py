@@ -13,6 +13,8 @@ class SubSelectorComponent(ModeSelectorComponent):
     return 2
 
   def update(self):
+    """ NOTE: Parent mode selector determines whether 
+    we want to show these selector buttons or not """
     if self._parent.mode() == 1:
       for row in range(self._matrix.height()):
         for column in range(self._matrix.width()):
