@@ -30,3 +30,4 @@ class QuNeoSessionComponent(SessionComponent):
           clip_slot.set_stopped_value(RED_HI)
         else:
           clip_slot.set_launch_button(None)
+    self.update()

@@ -13,17 +13,11 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
   """
 
   def __init__(self, matrix_notes, shift_button): 
-    self.shift_button = None
+    ModeSelectorComponent.__init__(self)
     self.setup_matrix(matrix_notes)
     self.setup_session(self._matrix, True)
     self.setup_subselector()
-
-    ModeSelectorComponent.__init__(self)
     self.setup_toggle(shift_button)
-
-  def setup_subselector(self):
-    self._sub_modes = SubSelectorComponent(self._matrix, self._session)
-    self._sub_modes.set_mode(0)
 
   def setup_matrix(self, matrix_notes):
     self._matrix = ButtonMatrixElement()
@@ -35,6 +29,10 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
 
   def setup_session(self, matrix, as_active):
     self._session = QuNeoSessionComponent(matrix) 
+
+  def setup_subselector(self):
+    self._sub_modes = SubSelectorComponent(self._matrix, self._session, self)
+    self._sub_modes.set_mode(0)
 
   def setup_toggle(self, shift_button):
     self.set_mode_toggle(ButtonElement(True, MIDI_NOTE_TYPE, PAD_CHANNEL, shift_button))
@@ -53,9 +51,8 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
 
   def update(self):
     if self.mode() == 0: 
-      self._session.setup()
       self._sub_modes._setup_mode_buttons(as_active = False)
-      self._session.update()
+      self._session.setup()
     else:
       self._session.setup(as_active = False)
       self._sub_modes._setup_mode_buttons()
