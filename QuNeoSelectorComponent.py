@@ -10,12 +10,15 @@ from QuNeoSessionComponent import QuNeoSessionComponent
 class QuNeoSelectorComponent(ModeSelectorComponent):
   """ Class that reassigns the QuNeo Matrix between default mode and mode selector mode 
       Default mode just renders whatever the SubSelector has selected
+
+      ALL THE INTERESTING BITS ARE IN THE SUBSELECTOR
   """
 
   def __init__(self, matrix_notes, shift_button): 
     ModeSelectorComponent.__init__(self)
     self.setup_matrix(matrix_notes)
-    self.setup_session(self._matrix, True)
+    self.setup_session(self._matrix)
+    self.setup_sequencer(self._matrix)
     self.setup_subselector()
     self.setup_toggle(shift_button)
 
@@ -27,7 +30,10 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
         button_row.append(ButtonElement(True, MIDI_NOTE_TYPE, GRID_CHANNEL, note))
       self._matrix.add_row(tuple(button_row))
 
-  def setup_session(self, matrix, as_active):
+  def setup_sequencer(self, matrix):
+
+
+  def setup_session(self, matrix):
     self._session = QuNeoSessionComponent(matrix) 
     self._session.set_offsets(0,0)
     #self._session.set_select_buttons(self.button(PAD_CHANNEL, SCENE_DOWN), self.button(PAD_CHANNEL, SCENE_UP))
@@ -53,10 +59,6 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
 
   def update(self):
     self._sub_modes.update()
-    if self.mode() == 0: 
-      self._sub_modes._setup_mode_buttons(as_active = False)
-    else:
-      self._sub_modes._setup_mode_buttons()
 
   def mode(self):
     return self._mode_index

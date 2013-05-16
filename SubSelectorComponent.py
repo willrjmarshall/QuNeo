@@ -9,30 +9,31 @@ class SubSelectorComponent(ModeSelectorComponent):
     self._matrix = matrix
     self._session = session
     self._parent = parent
+    self.set_mode(0)
 
   def number_of_modes(self):
     return 2
 
-  def is_active(self):
+  # Returns true when the root mode selector is engaged: e.g. in mode switch mode
+  def mode_selektor_engaged(self):
     return self._parent.mode() == 1
 
   def update(self):
-    """ NOTE: Parent mode selector determines whether 
-    we want to show these selector buttons or not """
-    if self.is_active(): 
-      self._session.setup(as_active = False)
-      for row in range(self._matrix.height()):
-        for column in range(self._matrix.width()):
-          self._matrix.get_button(column, row).turn_off()
-      
-      for index, button in enumerate(self._modes_buttons):
-        if self.mode() == index:
-          button.send_value(GREEN_HI)
-        else:
-          button.send_value(RED_HI)
+    # If the parent selector is engaged we only render our 
+    # mode selector buttons 
+    if self.mode_selektor_engaged(): 
+      self._session.setup(False)
+      self._setup_mode_buttons()
+
+    # Otherwise we look at our current mode, and render either
+    # Session View (mode 0), or 
+    # Sequencer View (mode 1)
     else:
-      self._session.setup()
-      # Actually render
+      self._setup_mode_buttons(False)
+      if self.mode() == 0:
+        self._session.setup()
+      else:
+        self._session.setup(False)
 
   def _setup_mode_buttons(self, as_active = True):
     mode_buttons = []
@@ -40,6 +41,13 @@ class SubSelectorComponent(ModeSelectorComponent):
       mode_buttons.append(self._matrix.get_button(button_index, (self._matrix.height() - 1)))
     if as_active:
       self.set_mode_buttons(mode_buttons)
+      
+      self.clear_matrix()
+      for index, button in enumerate(mode_buttons):
+        if self.mode() == index:
+          button.send_value(GREEN_HI)
+        else:
+          button.send_value(RED_HI)
     else:
       self.set_mode_buttons(None)
 
@@ -53,8 +61,12 @@ class SubSelectorComponent(ModeSelectorComponent):
         identify_sender = True
         button.add_value_listener(self._mode_value, identify_sender)
         self._modes_buttons.append(button)
-    self.update()
     # pick either session or sequencer
+
+  def clear_matrix(self):
+    for row in range(self._matrix.height()):
+      for column in range(self._matrix.width()):
+        self._matrix.get_button(column, row).turn_off()
 
 
   def mode(self):
