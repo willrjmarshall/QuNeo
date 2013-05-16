@@ -29,6 +29,8 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
 
   def setup_session(self, matrix, as_active):
     self._session = QuNeoSessionComponent(matrix) 
+    self._session.set_offsets(0,0)
+    #self._session.set_select_buttons(self.button(PAD_CHANNEL, SCENE_DOWN), self.button(PAD_CHANNEL, SCENE_UP))
 
   def setup_subselector(self):
     self._sub_modes = SubSelectorComponent(self._matrix, self._session, self)
@@ -50,12 +52,12 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
     return 2
 
   def update(self):
+    self._sub_modes.update()
     if self.mode() == 0: 
       self._sub_modes._setup_mode_buttons(as_active = False)
-      self._session.setup()
     else:
-      self._session.setup(as_active = False)
       self._sub_modes._setup_mode_buttons()
 
   def mode(self):
     return self._mode_index
+

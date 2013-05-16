@@ -7,15 +7,20 @@ class SubSelectorComponent(ModeSelectorComponent):
   def __init__(self, matrix, session, parent): 
     ModeSelectorComponent.__init__(self)
     self._matrix = matrix
+    self._session = session
     self._parent = parent
 
   def number_of_modes(self):
     return 2
 
+  def is_active(self):
+    return self._parent.mode() == 1
+
   def update(self):
     """ NOTE: Parent mode selector determines whether 
     we want to show these selector buttons or not """
-    if self._parent.mode() == 1:
+    if self.is_active(): 
+      self._session.setup(as_active = False)
       for row in range(self._matrix.height()):
         for column in range(self._matrix.width()):
           self._matrix.get_button(column, row).turn_off()
@@ -25,6 +30,9 @@ class SubSelectorComponent(ModeSelectorComponent):
           button.send_value(GREEN_HI)
         else:
           button.send_value(RED_HI)
+    else:
+      self._session.setup()
+      # Actually render
 
   def _setup_mode_buttons(self, as_active = True):
     mode_buttons = []
