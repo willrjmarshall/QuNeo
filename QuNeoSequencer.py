@@ -42,29 +42,27 @@ class QuNeoSequencer(CompoundComponent):
 
   def setup(self, as_active = True):
     if as_active:
-      self.seq_offset_left = self.button(PAD_CHANNEL, SESSION_LEFT)
-      self.seq_offset_right = self.button(PAD_CHANNEL, SESSION_RIGHT)
-      self.seq_offset_up = self.button(PAD_CHANNEL, SESSION_UP)
-      self.seq_offset_down = self.button(PAD_CHANNEL, SESSION_DOWN)
-      
-      buttons = []
-      for row in range(self._matrix.height()):
-        for col in range(self._matrix.width()):
-          #buttons.append(self.button(GRID_CHANNEL, CLIP_NOTE_MAP[row][col]))
-          button = self._matrix.get_button(col, row)
-          buttons.append(button)
-      self.set_sequencer_buttons(buttons)
+      self.set_movement_buttons()      
+      self.bind_to_matrix()
 
       self.clear_led()
-      self.update_notes()
       self.on_device_changed()
-      #self._update_grid()
     else:
       self.seq_offset_left = None 
       self.seq_offset_right = None
+
       self.seq_offset_up = None
       self.seq_offset_down = None
-      self.set_sequencer_buttons(None)
+      self.bind_to_matrix(False)
+
+  def set_movement_buttons(self, as_active = True):
+    """ Attaches event handlers to the movement buttons """
+    if as_active:
+      self.set_measure_offset(
+          self.button(PAD_CHANNEL, SESSION_LEFT), 
+          self.button(PAD_CHANNEL, SESSION_RIGHT))
+    else:
+      self.set_measure_offset(None, None)
 
   def set_slot_launch_button(self, button):
     if self._slot_launch_button is not button:
@@ -83,28 +81,28 @@ class QuNeoSequencer(CompoundComponent):
 
     if (self._note_up_button != None):
 
+
       self._note_up_button.add_value_listener(self._note_up_value)
+
     if (self._note_down_button != None):
       self._note_down_button.remove_value_listener(self._note_down_value)
     self._note_down_button = down_button
     if (self._note_down_button != None):
       self._note_down_button.add_value_listener(self._note_down_value)
-    self.update()
 
 
-  def set_seq_measure_offset(self, left_button, right_button):
-    if (self._measure_left_button != None):
+  def set_measure_offset(self, left_button, right_button):
+    if self._measure_left_button is not None:
       self._measure_left_button.remove_value_listener(self._measure_left)
     self._measure_left_button = left_button
-    if (self._measure_left_button != None):
+    if self._measure_left_button is not None:
       self._measure_left_button.add_value_listener(self._measure_left)
-    if (self._measure_right_button != None):
+
+    if self._measure_right_button is not None:
       self._measure_right_button.remove_value_listener(self._measure_right)
     self._measure_right_button = right_button
-    if (self._measure_right_button != None):
+    if self._measure_right_button is not None:
       self._measure_right_button.add_value_listener(self._measure_right)
-    self.update()
-
 
   def clear_led(self):
     if (self._slot_step_sequencer_buttons != None):
@@ -218,16 +216,13 @@ class QuNeoSequencer(CompoundComponent):
         self._clip_loop_length.add_value_listener(self._clip_loop_length_value)
       self.update()
 
-  def set_sequencer_buttons(self, buttons):
-    if (self._slot_step_sequencer_buttons != buttons):
-      if (self._slot_step_sequencer_buttons != None):
-        for button in self._slot_step_sequencer_buttons:
-          button.remove_value_listener(self._slot_step_sequencer_value)
-      self._slot_step_sequencer_buttons = buttons
-      if (self._slot_step_sequencer_buttons != None):
-        for button in self._slot_step_sequencer_buttons:
-          button.add_value_listener(self._slot_step_sequencer_value, identify_sender=True)
-      self.update()
+  """ Attaches our note creation/etc callbacks to the MATRIX """
+  def bind_to_matrix(self, as_active = True):
+    for button, (x, y) in self._matrix.iterbuttons():
+      if as_active:
+        button.add_value_listener(self._slot_step_sequencer_value, identify_sender=True)
+      else:
+        button.remove_value_listener(self._slot_step_sequencer_value)
 
   def update_buttons(self):
     for row in range(64):
@@ -327,9 +322,8 @@ class QuNeoSequencer(CompoundComponent):
   				else:
   					None
   						
+  """ Called when a button the matrix is pressed """
   def _slot_step_sequencer_value(self, value, sender):
-  	assert (value in range(128))
-  	assert (self._slot_step_sequencer_buttons != None)
   	if self.is_enabled():
   		if self._sequencer_clip != None and self._sequencer_clip.is_midi_clip:
   			if value != 0:
