@@ -8,6 +8,9 @@ from SubSelectorComponent import SubSelectorComponent
 from QuNeoSessionComponent import QuNeoSessionComponent
 from QuNeoSequencer import QuNeoSequencer
 
+from ConfigurableButtonElement import ConfigurableButtonElement
+from QuNeoMatrixElement import QuNeoMatrixElement
+
 class QuNeoSelectorComponent(ModeSelectorComponent):
   """ Class that reassigns the QuNeo Matrix between default mode and mode selector mode 
       Default mode just renders whatever the SubSelector has selected
@@ -19,16 +22,19 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
     ModeSelectorComponent.__init__(self)
     self.setup_matrix(matrix_notes)
     self.setup_session(self._matrix)
+    for row in range(self._matrix.height()):
+      for column in range(self._matrix.width()):
+        self._matrix.get_button(column, row).turn_off()
     self.setup_sequencer(self._matrix)
     self.setup_subselector()
     self.setup_toggle(shift_button)
 
   def setup_matrix(self, matrix_notes):
-    self._matrix = ButtonMatrixElement()
+    self._matrix = QuNeoMatrixElement()
     for row in matrix_notes:
       button_row = []
       for note in row:
-        button_row.append(ButtonElement(True, MIDI_NOTE_TYPE, GRID_CHANNEL, note))
+        button_row.append(ConfigurableButtonElement(True, MIDI_NOTE_TYPE, GRID_CHANNEL, note))
       self._matrix.add_row(tuple(button_row))
 
   def setup_sequencer(self, matrix):

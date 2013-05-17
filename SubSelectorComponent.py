@@ -24,6 +24,7 @@ class SubSelectorComponent(ModeSelectorComponent):
     # mode selector buttons 
     if self.mode_selektor_engaged(): 
       self._session.setup(False)
+      self._sequencer.setup(False)
       self._setup_mode_buttons()
 
     # Otherwise we look at our current mode, and render either
@@ -31,11 +32,11 @@ class SubSelectorComponent(ModeSelectorComponent):
     # Sequencer View (mode 1)
     else:
       self._setup_mode_buttons(False)
-      self.clear_matrix()
       if self.mode() == 0:
         self._sequencer.setup(False)
         self._session.setup()
       else:
+        self._matrix.clear()
         self._session.setup(False)
         self._sequencer.setup()
 
@@ -45,8 +46,7 @@ class SubSelectorComponent(ModeSelectorComponent):
       mode_buttons.append(self._matrix.get_button(button_index, (self._matrix.height() - 1)))
     if as_active:
       self.set_mode_buttons(mode_buttons)
-      
-      self.clear_matrix()
+      self._matrix.clear()
       for index, button in enumerate(mode_buttons):
         if self.mode() == index:
           button.send_value(GREEN_HI)
@@ -66,12 +66,6 @@ class SubSelectorComponent(ModeSelectorComponent):
         button.add_value_listener(self._mode_value, identify_sender)
         self._modes_buttons.append(button)
     # pick either session or sequencer
-
-  def clear_matrix(self):
-    for row in range(self._matrix.height()):
-      for column in range(self._matrix.width()):
-        self._matrix.get_button(column, row).turn_off()
-
 
   def mode(self):
     return self._mode_index

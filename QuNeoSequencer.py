@@ -1,5 +1,6 @@
+from ConfigurableButtonElement import ConfigurableButtonElement
+from _Framework.InputControlElement import *
 from _Framework.CompoundComponent import CompoundComponent
-
 
 from MIDI_Map import *
 
@@ -8,6 +9,8 @@ class QuNeoSequencer(CompoundComponent):
 
   def __init__(self, matrix, session):
     super(QuNeoSequencer, self).__init__()
+    self._matrix = matrix
+    self._session = session
     self._slot_launch_button = None
     self._clip_loop_start = None
     self._clip_loop_length = None
@@ -27,14 +30,47 @@ class QuNeoSequencer(CompoundComponent):
     self._clip_slot = None
     self._clip_notes = None
 
+  def button(self, channel, note, color = GREEN_HI):
+    return ConfigurableButtonElement(True, MIDI_NOTE_TYPE, channel, note, color)
+
+  def create_note(self, value, loc):
+    if (value):
+      x = (value, loc, 0.25, 127, False)
+    else:
+      None
+    return x
 
   def setup(self, as_active = True):
-    pass
+    if as_active:
+      self.seq_offset_left = self.button(PAD_CHANNEL, SESSION_LEFT)
+      self.seq_offset_right = self.button(PAD_CHANNEL, SESSION_RIGHT)
+      self.seq_offset_up = self.button(PAD_CHANNEL, SESSION_UP)
+      self.seq_offset_down = self.button(PAD_CHANNEL, SESSION_DOWN)
+      
+      buttons = []
+      for row in range(self._matrix.height()):
+        for col in range(self._matrix.width()):
+          #buttons.append(self.button(GRID_CHANNEL, CLIP_NOTE_MAP[row][col]))
+          button = self._matrix.get_button(col, row)
+          buttons.append(button)
+      self.set_sequencer_buttons(buttons)
+
+      self.clear_led()
+      self.update_notes()
+      self.on_device_changed()
+      #self._update_grid()
+    else:
+      self.seq_offset_left = None 
+      self.seq_offset_right = None
+      self.seq_offset_up = None
+      self.seq_offset_down = None
+      self.set_sequencer_buttons(None)
 
   def set_slot_launch_button(self, button):
     if self._slot_launch_button is not button:
       if self._slot_launch_button is not None:
         self._slot_launch_button.remove_value_listener(self._slot_launch_value)
+
       self._slot_launch_button = button
       if (self._slot_launch_button != None):
         self._slot_launch_button.add_value_listener(self._slot_launch_value)
@@ -44,7 +80,9 @@ class QuNeoSequencer(CompoundComponent):
     if (self._note_up_button != None):
       self._note_up_button.remove_value_listener(self._note_up_value)
     self._note_up_button = up_button
+
     if (self._note_up_button != None):
+
       self._note_up_button.add_value_listener(self._note_up_value)
     if (self._note_down_button != None):
       self._note_down_button.remove_value_listener(self._note_down_value)
@@ -188,7 +226,6 @@ class QuNeoSequencer(CompoundComponent):
       self._slot_step_sequencer_buttons = buttons
       if (self._slot_step_sequencer_buttons != None):
         for button in self._slot_step_sequencer_buttons:
-          assert isinstance(button, ButtonElement)
           button.add_value_listener(self._slot_step_sequencer_value, identify_sender=True)
       self.update()
 
@@ -204,11 +241,19 @@ class QuNeoSequencer(CompoundComponent):
           else:
             None
 
+  """ 
+  Loc offset == location offset?
+  Builds table of three values:
+    * button MIDI NOTE
+    * Key / vertical position on MIDI grid
+    * Location / horizontal position on MIDI grid
+  """ 
   def update_quneo_matrix(self):
     self.new_table = []
     for row in range(8):
       for col in range(8):
         self.new_table.append([CLIP_NOTE_MAP[row][col], (self._key_index+self.scale[row]), (self._loc_offset+col/4.0)])
+
     self.new_clip_notes = []
     if self._clip_notes != None:
       for note in self._clip_notes:
@@ -224,6 +269,7 @@ class QuNeoSequencer(CompoundComponent):
         self._sequencer_clip.deselect_all_notes()
         if self._clip_notes != note_cache:
           self._clip_notes = note_cache
+
       self.update_quneo_matrix()
 
   def _slot_launch_value(self, value):
@@ -349,4 +395,3 @@ class QuNeoSequencer(CompoundComponent):
         self.key_offset = 7
         self.loop_up_table = 8
     self.update()
-    self.update_notes()
