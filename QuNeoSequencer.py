@@ -64,8 +64,12 @@ class QuNeoSequencer(CompoundComponent):
       self.set_measure_offset(
           self.button(PAD_CHANNEL, SESSION_LEFT), 
           self.button(PAD_CHANNEL, SESSION_RIGHT))
+      self.set_note_offset(
+          self.button(PAD_CHANNEL, SESSION_UP), 
+          self.button(PAD_CHANNEL, SESSION_DOWN))
     else:
       self.set_measure_offset(None, None)
+      self.set_note_offset(None, None)
 
   def set_slot_launch_button(self, button):
     if self._slot_launch_button is not button:
@@ -77,24 +81,22 @@ class QuNeoSequencer(CompoundComponent):
         self._slot_launch_button.add_value_listener(self._slot_launch_value)
       self.update()
 
-  def set_seq_note_offset(self, up_button, down_button):
-    if (self._note_up_button != None):
+  def set_note_offset(self, up_button, down_button):
+    """ Up and down movement buttons """
+    if self._note_up_button is not None:
       self._note_up_button.remove_value_listener(self._note_up_value)
     self._note_up_button = up_button
-
-    if (self._note_up_button != None):
-
-
+    if self._note_up_button is not None:
       self._note_up_button.add_value_listener(self._note_up_value)
 
-    if (self._note_down_button != None):
+    if self._note_down_button is not None:
       self._note_down_button.remove_value_listener(self._note_down_value)
     self._note_down_button = down_button
-    if (self._note_down_button != None):
+    if self._note_down_button is not None:
       self._note_down_button.add_value_listener(self._note_down_value)
 
-
   def set_measure_offset(self, left_button, right_button):
+    """ Left and right movement buttons """
     if self._measure_left_button is not None:
       self._measure_left_button.remove_value_listener(self._measure_left)
     self._measure_left_button = left_button
