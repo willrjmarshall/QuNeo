@@ -4,11 +4,12 @@ from MIDI_Map import *
 class SubSelectorComponent(ModeSelectorComponent):
   """ Subselector that switches between session and sequencer modes """
 
-  def __init__(self, matrix, session, parent): 
+  def __init__(self, matrix, session, sequencer, parent): 
     ModeSelectorComponent.__init__(self)
     self._matrix = matrix
     self._session = session
     self._parent = parent
+    self._sequencer = sequencer
     self.set_mode(0)
 
   def number_of_modes(self):
@@ -30,10 +31,13 @@ class SubSelectorComponent(ModeSelectorComponent):
     # Sequencer View (mode 1)
     else:
       self._setup_mode_buttons(False)
+      self.clear_matrix()
       if self.mode() == 0:
+        self._sequencer.setup(False)
         self._session.setup()
       else:
         self._session.setup(False)
+        self._sequencer.setup()
 
   def _setup_mode_buttons(self, as_active = True):
     mode_buttons = []

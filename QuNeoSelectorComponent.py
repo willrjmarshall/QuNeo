@@ -6,6 +6,7 @@ from _Framework.InputControlElement import *
 from MIDI_Map import *
 from SubSelectorComponent import SubSelectorComponent
 from QuNeoSessionComponent import QuNeoSessionComponent
+from QuNeoSequencer import QuNeoSequencer
 
 class QuNeoSelectorComponent(ModeSelectorComponent):
   """ Class that reassigns the QuNeo Matrix between default mode and mode selector mode 
@@ -31,7 +32,7 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
       self._matrix.add_row(tuple(button_row))
 
   def setup_sequencer(self, matrix):
-
+    self._sequencer = QuNeoSequencer(matrix, self._session)
 
   def setup_session(self, matrix):
     self._session = QuNeoSessionComponent(matrix) 
@@ -39,7 +40,7 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
     #self._session.set_select_buttons(self.button(PAD_CHANNEL, SCENE_DOWN), self.button(PAD_CHANNEL, SCENE_UP))
 
   def setup_subselector(self):
-    self._sub_modes = SubSelectorComponent(self._matrix, self._session, self)
+    self._sub_modes = SubSelectorComponent(self._matrix, self._session, self._sequencer, self)
     self._sub_modes.set_mode(0)
 
   def setup_toggle(self, shift_button):
