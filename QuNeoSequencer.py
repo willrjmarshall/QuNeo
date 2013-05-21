@@ -1,10 +1,11 @@
 from ConfigurableButtonElement import ConfigurableButtonElement
 from _Framework.InputControlElement import *
 from _Framework.CompoundComponent import CompoundComponent
+from QuNeoUtility import QuNeoUtility
 
 from MIDI_Map import *
 
-class QuNeoSequencer(CompoundComponent):
+class QuNeoSequencer(CompoundComponent, QuNeoUtility):
   """ A Component that's used to drive the step sequencer """
 
   def __init__(self, matrix, session):
@@ -20,6 +21,7 @@ class QuNeoSequencer(CompoundComponent):
     self._measure_left_button = None
     self._measure_right_button = None
     self._sequencer_clip = None
+
     self._buttons = []
     self.scale = CHROMATIC_SCALE
     self.notes = []
@@ -31,8 +33,14 @@ class QuNeoSequencer(CompoundComponent):
     self._clip_slot = None
     self._clip_notes = None
 
+    self.song().view.add_detail_clip_listener(self.on_clip_changed)
+
+
   def button(self, channel, note, color = GREEN_HI):
     return ConfigurableButtonElement(True, MIDI_NOTE_TYPE, channel, note, color)
+
+  def on_selected_track_changed(self):
+    failsohard
 
   def create_note(self, value, loc):
     if (value):
@@ -45,20 +53,14 @@ class QuNeoSequencer(CompoundComponent):
     if as_active:
       self.set_movement_buttons()      
       self.bind_to_matrix()
-
       self.clear_led()
       self.update_notes()
       self.on_device_changed()
     else:
-      self.seq_offset_left = None 
-      self.seq_offset_right = None
-
-      self.seq_offset_up = None
-      self.seq_offset_down = None
       self.bind_to_matrix(False)
+      self.set_movement_buttons(False)      
 
   def set_movement_buttons(self, as_active = True):
-
     """ Attaches event handlers to the movement buttons """
     if as_active:
       self.set_measure_offset(
@@ -406,3 +408,11 @@ class QuNeoSequencer(CompoundComponent):
         self.key_offset = 7
         self.loop_up_table = 8
     self.update()
+
+  def on_clip_changed(self):
+    self.update()
+    self.update_notes()
+
+  def disconnect(self):
+    super(QuNeoSequencer, self).disconnect() 
+    self.song().view.remove_detail_clip_listener(self.on_clip_changed)
