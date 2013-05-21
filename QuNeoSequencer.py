@@ -39,9 +39,6 @@ class QuNeoSequencer(CompoundComponent, QuNeoUtility):
   def button(self, channel, note, color = GREEN_HI):
     return ConfigurableButtonElement(True, MIDI_NOTE_TYPE, channel, note, color)
 
-  def on_selected_track_changed(self):
-    failsohard
-
   def create_note(self, value, loc):
     if (value):
       x = (value, loc, 0.25, 127, False)
@@ -54,7 +51,7 @@ class QuNeoSequencer(CompoundComponent, QuNeoUtility):
       self.set_movement_buttons()      
       self.bind_to_matrix()
       self.clear_led()
-      self.update_notes()
+      self.update()
       self.on_device_changed()
     else:
       self.bind_to_matrix(False)
@@ -153,6 +150,7 @@ class QuNeoSequencer(CompoundComponent, QuNeoUtility):
       self._sequencer_clip = self.song().view.highlighted_clip_slot.clip
     else:
       self._sequencer_clip = None
+    self.update_notes()
 
 
   def _measure_left(self, value):
@@ -410,8 +408,11 @@ class QuNeoSequencer(CompoundComponent, QuNeoUtility):
     self.update()
 
   def on_clip_changed(self):
-    self.update()
-    self.update_notes()
+    # Can we do this better?
+    #self.setup(False)
+    #self.setup()
+    self.clear_led()
+    self.on_device_changed()
 
   def disconnect(self):
     super(QuNeoSequencer, self).disconnect() 
