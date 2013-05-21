@@ -16,6 +16,22 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
 
 
   def setup(self, as_active = True):
+    if as_active:
+      self.set_scene_bank_buttons(
+        self.button(PAD_CHANNEL, SESSION_UP),
+        self.button(PAD_CHANNEL, SESSION_DOWN))
+
+      self.set_track_bank_buttons(
+        self.button(PAD_CHANNEL, SESSION_RIGHT),
+        self.button(PAD_CHANNEL, SESSION_LEFT))
+    else:
+      self.set_scene_bank_buttons(
+        None,
+        None)
+      self.set_track_bank_buttons(
+        None,
+        None)
+  
     matrix = self._matrix
     for scene_index in range(matrix.height()):
       scene = self.scene(scene_index)
@@ -38,13 +54,6 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
     #if as_active:
       #matrix = self._matrix
 
-      #self.set_scene_bank_buttons(
-        #self.button(PAD_CHANNEL, SESSION_UP),
-        #self.button(PAD_CHANNEL, SESSION_DOWN))
-
-      #self.set_track_bank_buttons(
-        #self.button(PAD_CHANNEL, SESSION_RIGHT),
-        #self.button(PAD_CHANNEL, SESSION_LEFT))
 
       #for scene_index in range(matrix.height()):
         #scene = self.scene(scene_index)
@@ -62,12 +71,6 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
           #else:
             #clip_slot.set_launch_button(None)
     #else:
-      #self.set_scene_bank_buttons(
-        #None,
-        #None)
-      #self.set_track_bank_buttons(
-        #None,
-        #None)
     #self.update()
 
 
