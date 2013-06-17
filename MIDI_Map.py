@@ -32,8 +32,8 @@ METRONOME = 38
 TEMPO_UP = 37
 TEMPO_DOWN = 36
 
-SEND_A = 6
-SEND_B = 7
+LOOP_START = 6
+LOOP_END = 7
 
 # Device Control
 DEVICELOCK = -1 #Device Lock (lock "blue hand")

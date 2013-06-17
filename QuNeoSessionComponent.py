@@ -27,8 +27,8 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
         self.button(PAD_CHANNEL, SESSION_RIGHT),
         self.button(PAD_CHANNEL, SESSION_LEFT))
 
-      self.set_clip_loop_start(self.encoder(SLIDER_CHANNEL, SEND_A))
-      self.set_clip_loop_length(self.encoder(SLIDER_CHANNEL, SEND_B))
+      self.set_clip_loop_start(self.encoder(SLIDER_CHANNEL, LOOP_START))
+      self.set_clip_loop_length(self.encoder(SLIDER_CHANNEL, LOOP_END))
     else:
       self.set_scene_bank_buttons(
         None,
