@@ -7,6 +7,7 @@ import math
 from _Framework.ControlSurface import ControlSurface
 from QuNeoSelectorComponent import QuNeoSelectorComponent
 from QuNeoMixer import QuNeoMixer
+from QuNeoTransport import QuNeoTransport
 from MIDI_Map import *
 
 
@@ -18,6 +19,7 @@ class QuNeo(ControlSurface):
     with self.component_guard():
       self.setup_selector()
       self.setup_mixer()
+      self.setup_transport()
       self.set_highlighting_session_component(self._selector._session)
 
   def setup_selector(self):
@@ -25,3 +27,6 @@ class QuNeo(ControlSurface):
 
   def setup_mixer(self):
     self.mixer = QuNeoMixer()
+
+  def setup_transport(self):
+    self.transport = QuNeoTransport()
