@@ -29,6 +29,11 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
 
       self.set_clip_loop_start(self.encoder(SLIDER_CHANNEL, LOOP_START))
       self.set_clip_loop_length(self.encoder(SLIDER_CHANNEL, LOOP_END))
+
+      self.set_select_buttons(
+          self.button(PAD_CHANNEL, SCENE_DOWN),
+          self.button(PAD_CHANNEL, SCENE_UP))
+
     else:
       self.set_scene_bank_buttons(
         None,
@@ -38,6 +43,8 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
         None)
       self.set_clip_loop_start(None)
       self.set_clip_loop_length(None)
+
+      self.set_select_buttons(None, None)
   
     matrix = self._matrix
     for scene_index in range(matrix.height()):

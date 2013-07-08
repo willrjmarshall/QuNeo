@@ -25,6 +25,8 @@ class QuNeoMixer(MixerComponent, QuNeoUtility):
       self.set_select_buttons(
           self.button(PAD_CHANNEL, TRACK_RIGHT),
           self.button(PAD_CHANNEL, TRACK_LEFT))
+
+
     else:
       self.set_crossfader_control(None)
       for track in range(8):
@@ -36,3 +38,4 @@ class QuNeoMixer(MixerComponent, QuNeoUtility):
       self.selected_strip().set_pan_control(None)
       self.selected_strip().set_volume_control(None)
       self.set_select_buttons(None, None)
+      self.set_bank_buttons(None, None)
