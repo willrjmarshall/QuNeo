@@ -20,11 +20,15 @@ class QuNeoMixer(MixerComponent, QuNeoUtility):
         strip._mute_button._off_value = GREEN_HI 
         strip._solo_button._on_value = ORANGE_HI 
         strip._arm_button._on_value = ORANGE_HI 
+        strip.update()
       else:
-        strip._mute_button._on_value = RED_HI 
-        strip._mute_button._off_value = 0 
-        strip._solo_button._on_value = RED_HI 
-        strip._arm_button._on_value = RED_HI 
+        if strip._mute_button:
+          strip._mute_button._on_value = RED_HI 
+          strip._mute_button._off_value = 0 
+        if strip._solo_button:
+          strip._solo_button._on_value = RED_HI 
+        if strip._arm_button:
+          strip._arm_button._on_value = RED_HI 
         strip.set_select_button(None) 
         strip.set_solo_button(None) 
         strip.set_arm_button(None) 

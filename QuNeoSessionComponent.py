@@ -43,8 +43,7 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
         None)
       self.set_clip_loop_start(None)
       self.set_clip_loop_length(None)
-
-      self.set_select_buttons(None, None)
+      #self.set_select_buttons(None, None)
 
     matrix = self._matrix
     if as_active:

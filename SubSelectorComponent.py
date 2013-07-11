@@ -25,7 +25,7 @@ class SubSelectorComponent(ModeSelectorComponent):
     # mode selector buttons 
     if self.mode_selektor_engaged(): 
       self._session.setup(False)
-      self._mixer.setup_matrix_controls(self._matrix, False)
+      self._mixer.setup_matrix_controls(False)
       self._sequencer.setup(False)
       self._setup_mode_buttons()
 
