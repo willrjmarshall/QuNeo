@@ -45,16 +45,26 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
       self.set_clip_loop_length(None)
 
       self.set_select_buttons(None, None)
-  
+
     matrix = self._matrix
-    for scene_index in range(matrix.height()):
+    if as_active:
+      stop_buttons = []
+      for column in range(7):
+        stop_buttons.append(matrix.get_button(column, 4))
+      self.set_stop_track_clip_buttons(stop_buttons)
+      self.set_stop_all_clips_button(matrix.get_button(7, 4))
+    else:
+      self.set_stop_track_clip_buttons([])
+      self.set_stop_all_clips_button(None)
+
+    for scene_index in range(4):
       scene = self.scene(scene_index)
       if as_active:
         scene_button = matrix.get_button(7, scene_index)
         scene.set_launch_button(scene_button)
       else:
         scene.set_launch_button(None)
-      for track_index in range(self.session_width(matrix)):
+      for track_index in range(self.session_width(matrix) - 1):
         clip_slot = scene.clip_slot(track_index) 
         if as_active:
           button = matrix.get_button(track_index, scene_index)

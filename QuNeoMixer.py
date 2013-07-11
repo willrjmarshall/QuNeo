@@ -3,12 +3,34 @@ from QuNeoUtility import QuNeoUtility
 from MIDI_Map import *
 
 class QuNeoMixer(MixerComponent, QuNeoUtility):
-  def __init__(self):
+  def __init__(self, matrix):
     MixerComponent.__init__(self, 8)
     self.sends = []
+    self.matrix = matrix
     self.setup()
 
+  def setup_matrix_controls(self, as_active = True):
+    for track in range(7):
+      strip = self.channel_strip(track)
+      if as_active:
+        strip.set_mute_button(self.matrix.get_button(track, 5))
+        strip.set_solo_button(self.matrix.get_button(track, 6))
+        strip.set_arm_button(self.matrix.get_button(track, 7))
+        strip._mute_button._on_value = 0 
+        strip._mute_button._off_value = GREEN_HI 
+        strip._solo_button._on_value = ORANGE_HI 
+        strip._arm_button._on_value = ORANGE_HI 
+      else:
+        strip._mute_button._on_value = RED_HI 
+        strip._mute_button._off_value = 0 
+        strip._solo_button._on_value = RED_HI 
+        strip._arm_button._on_value = RED_HI 
+        strip.set_select_button(None) 
+        strip.set_solo_button(None) 
+        strip.set_arm_button(None) 
+
   def setup(self, as_active = True):
+    self.setup_matrix_controls()
     if as_active:
       self.set_crossfader_control(self.encoder(PAD_CHANNEL, CROSSFADER))
       for track in range(8):
@@ -25,8 +47,7 @@ class QuNeoMixer(MixerComponent, QuNeoUtility):
       self.set_select_buttons(
           self.button(PAD_CHANNEL, TRACK_RIGHT),
           self.button(PAD_CHANNEL, TRACK_LEFT))
-
-
+  
     else:
       self.set_crossfader_control(None)
       for track in range(8):

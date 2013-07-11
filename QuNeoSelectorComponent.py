@@ -7,6 +7,7 @@ from MIDI_Map import *
 from SubSelectorComponent import SubSelectorComponent
 from QuNeoSessionComponent import QuNeoSessionComponent
 from QuNeoSequencer import QuNeoSequencer
+from QuNeoMixer import QuNeoMixer
 
 from ConfigurableButtonElement import ConfigurableButtonElement
 from QuNeoMatrixElement import QuNeoMatrixElement
@@ -20,7 +21,9 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
 
   def __init__(self, matrix_notes, shift_button): 
     ModeSelectorComponent.__init__(self)
+
     self.setup_matrix(matrix_notes)
+    self.setup_mixer()
     self.setup_session(self._matrix)
     for row in range(self._matrix.height()):
       for column in range(self._matrix.width()):
@@ -28,6 +31,9 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
     self.setup_sequencer(self._matrix)
     self.setup_subselector()
     self.setup_toggle(shift_button)
+
+  def setup_mixer(self):
+    self.mixer = QuNeoMixer(self._matrix)
 
   def setup_matrix(self, matrix_notes):
     self._matrix = QuNeoMatrixElement()
@@ -45,7 +51,7 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
     self._session.set_offsets(0,0)
 
   def setup_subselector(self):
-    self._sub_modes = SubSelectorComponent(self._matrix, self._session, self._sequencer, self)
+    self._sub_modes = SubSelectorComponent(self._matrix, self._session, self.mixer, self._sequencer, self)
     self._sub_modes.set_mode(0)
 
   def setup_toggle(self, shift_button):
