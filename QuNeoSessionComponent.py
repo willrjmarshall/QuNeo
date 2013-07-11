@@ -10,6 +10,7 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
     self._matrix = matrix 
     self._clip_loop_start = None
     self._clip_loop_length = None
+    self._slot_launch_button = None
     self.setup()
 
   def session_width(self, matrix):
@@ -46,15 +47,18 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
       #self.set_select_buttons(None, None)
 
     matrix = self._matrix
+
     if as_active:
       stop_buttons = []
       for column in range(7):
         stop_buttons.append(matrix.get_button(column, 4))
       self.set_stop_track_clip_buttons(stop_buttons)
       self.set_stop_all_clips_button(matrix.get_button(7, 4))
+      self.set_slot_launch_button(matrix.get_button(7, 7))
     else:
       self.set_stop_track_clip_buttons([])
       self.set_stop_all_clips_button(None)
+      self.set_slot_launch_button(None)
 
     for scene_index in range(4):
       scene = self.scene(scene_index)
@@ -140,3 +144,17 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
     if (self._clip_loop_length != None):
       self._clip_loop_length.remove_value_listener(self._clip_loop_length_value)
       self._clip_loop_length = None
+
+  def set_slot_launch_button(self, button):
+    if (self._slot_launch_button != button):
+      if (self._slot_launch_button != None):
+        self._slot_launch_button.remove_value_listener(self._slot_launch_value)
+      self._slot_launch_button = button
+      if (self._slot_launch_button != None):
+        self._slot_launch_button.add_value_listener(self._slot_launch_value)
+      self.update()
+
+  def _slot_launch_value(self, value):
+    if ((value != 0) or (not self._slot_launch_button.is_momentary())):
+      if (self.song().view.highlighted_clip_slot != None):
+        self.song().view.highlighted_clip_slot.fire()
