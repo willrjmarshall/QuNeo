@@ -46,11 +46,11 @@ class ConfigurableButtonElement(ButtonElement):
     def set_enabled(self, enabled):
         self._is_enabled = enabled
 
-    def turn_on(self):
-        self.send_value(self._on_value)
+    #def turn_on(self):
+        #self.send_value(self._on_value)
 
-    def turn_off(self):
-        self.send_value(self._off_value)
+    #def turn_off(self):
+        #self.send_value(self._off_value)
 
     def reset(self):
         self.send_value(0) #4 for Launchpad, 0 for APC40/20

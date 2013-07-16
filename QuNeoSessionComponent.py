@@ -12,11 +12,18 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
     self._clip_loop_length = None
     self._slot_launch_button = None
     self.setup()
+    self.song().add_current_song_time_listener(self.force_clips)
+
+  def force_clips(self):
+    for scene_index in range(4):
+      for track_index in range(self.session_width(matrix) - 1):
+        clip_slot = scene.clip_slot(track_index) 
+        clip = clip_slot._launch_button_value_slot.subject 
+        clip.send_value(clip_slot._feedback_value(), True)
 
   def session_width(self, matrix):
     """ The QuNeo only uses 7/8 columns for clip control """
     return (matrix.width() - 1)
-
 
   def setup(self, as_active = True):
     if as_active:
@@ -34,7 +41,6 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
       self.set_select_buttons(
           self.button(PAD_CHANNEL, SCENE_DOWN),
           self.button(PAD_CHANNEL, SCENE_UP))
-
     else:
       self.set_scene_bank_buttons(
         None,
@@ -72,7 +78,9 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
         if as_active:
           button = matrix.get_button(track_index, scene_index)
           clip_slot.set_launch_button(button)
-          clip_slot.set_stopped_value(RED_HI)
+          clip_slot.set_stopped_value(ORANGE_HI)
+          clip_slot.set_started_value(GREEN_HI)
+          clip_slot.set_recording_value(RED_HI)
         else:
           clip_slot.set_launch_button(None)
     self.update()
@@ -138,6 +146,7 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
 
   def disconnect(self):
     SessionComponent.disconnect(self)
+    self.song().remove_current_song_time_listener(self.force_clips)
     if (self._clip_loop_start != None):
       self._clip_loop_start.remove_value_listener(self._slot_launch_loop_value)
       self._clip_loop_start = None
