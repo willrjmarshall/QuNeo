@@ -19,9 +19,9 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
       ALL THE INTERESTING BITS ARE IN THE SUBSELECTOR
   """
 
-  def __init__(self, matrix_notes, shift_button): 
+  def __init__(self, control_surface, matrix_notes, shift_button): 
     ModeSelectorComponent.__init__(self)
-
+    self.control_surface = control_surface
     self.setup_matrix(matrix_notes)
     self.setup_mixer()
     self.setup_session(self._matrix)
@@ -47,7 +47,7 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
     self._sequencer = QuNeoSequencer(matrix, self._session)
 
   def setup_session(self, matrix):
-    self._session = QuNeoSessionComponent(matrix) 
+    self._session = QuNeoSessionComponent(self.control_surface, matrix) 
     self._session.set_offsets(0,0)
 
   def setup_subselector(self):

@@ -5,8 +5,9 @@ from MIDI_Map import *
 class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
   """ A customized SessionComponent that can configure itself """
 
-  def __init__(self, matrix, *a, **k):
+  def __init__(self, control_surface, matrix, *a, **k):
     SessionComponent.__init__(self, self.session_width(matrix), matrix.height())
+    self.control_surface = control_surface
     self._matrix = matrix 
     self._clip_loop_start = None
     self._clip_loop_length = None
@@ -16,10 +17,13 @@ class QuNeoSessionComponent(SessionComponent, QuNeoUtility):
 
   def force_clips(self):
     for scene_index in range(4):
-      for track_index in range(self.session_width(matrix) - 1):
+      scene = self.scene(scene_index)
+      for track_index in range(self.session_width(self._matrix) - 1):
         clip_slot = scene.clip_slot(track_index) 
         clip = clip_slot._launch_button_value_slot.subject 
-        clip.send_value(clip_slot._feedback_value(), True)
+        value = clip_slot._feedback_value() 
+        if value > 0:
+          clip.send_value(value, True)
 
   def session_width(self, matrix):
     """ The QuNeo only uses 7/8 columns for clip control """

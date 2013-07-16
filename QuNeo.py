@@ -22,7 +22,7 @@ class QuNeo(ControlSurface):
       self.set_highlighting_session_component(self._selector._session)
 
   def setup_selector(self):
-    self._selector = QuNeoSelectorComponent(CLIP_NOTE_MAP, SHIFT_BUTTON)
+    self._selector = QuNeoSelectorComponent(self, CLIP_NOTE_MAP, SHIFT_BUTTON)
 
   def setup_transport(self):
     self.transport = QuNeoTransport()
