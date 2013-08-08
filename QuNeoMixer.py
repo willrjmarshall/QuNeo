@@ -25,6 +25,7 @@ class QuNeoMixer(MixerComponent, QuNeoUtility):
         if strip._mute_button:
           strip._mute_button._on_value = RED_HI 
           strip._mute_button._off_value = 0 
+          strip.set_mute_button(None)
         if strip._solo_button:
           strip._solo_button._on_value = RED_HI 
         if strip._arm_button:

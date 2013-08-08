@@ -15,6 +15,7 @@ class ConfigurableButtonElement(ButtonElement):
         self._note = identifier
         self._off_value = 0 #4 for Launchpad, 0 for APC40/20
         self._blink_on = None
+        self._last_active_value = 0
         self._blinking = False
         self._led_on = 0
         self._is_enabled = True
@@ -73,6 +74,7 @@ class ConfigurableButtonElement(ButtonElement):
 
     def send_value(self, value, force = False):
         ButtonElement.send_value(self, value, (force or self._force_next_value))
+        self._last_active_value = value
         self._force_next_value = False
         
     def install_connections(self, install_translation_callback, install_mapping_callback, install_forwarding_callback):

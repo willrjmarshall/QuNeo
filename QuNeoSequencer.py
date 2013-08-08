@@ -34,7 +34,10 @@ class QuNeoSequencer(CompoundComponent, QuNeoUtility):
     self._clip_notes = None
 
     self.song().view.add_detail_clip_listener(self.on_clip_changed)
+    self.song().add_current_song_time_listener(self.force_leds)
 
+  def force_leds(self):
+    pass
 
   def button(self, channel, note, color = GREEN_HI):
     return ConfigurableButtonElement(True, MIDI_NOTE_TYPE, channel, note, color)
@@ -416,4 +419,5 @@ class QuNeoSequencer(CompoundComponent, QuNeoUtility):
 
   def disconnect(self):
     super(QuNeoSequencer, self).disconnect() 
+    self.song().remove_current_song_time_listener(self.force_leds)
     self.song().view.remove_detail_clip_listener(self.on_clip_changed)

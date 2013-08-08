@@ -32,6 +32,13 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
     self.setup_subselector()
     self.setup_toggle(shift_button)
 
+    self.song().add_current_song_time_listener(self.force_leds)
+
+  def force_leds(self):
+    for button, (x, y) in self._matrix.iterbuttons():
+      if button._last_active_value > 0:
+        button.send_value(button._last_active_value, True)
+  
   def setup_mixer(self):
     self.mixer = QuNeoMixer(self._matrix)
 
@@ -74,4 +81,9 @@ class QuNeoSelectorComponent(ModeSelectorComponent):
 
   def mode(self):
     return self._mode_index
+
+  def disconnect(self):
+    ModeSelectorComponent.disconnect(self)
+    self.song().remove_current_song_time_listener(self.force_leds)
+    
 
